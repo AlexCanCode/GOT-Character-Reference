@@ -1,34 +1,47 @@
-import csv
+import os.path
 import requests
 from bs4 import BeautifulSoup
+import time
 
-#NEXT STEPS: how are you going to save the data in a relational way with a key that makes it findable and accessible. Different case than quick stats because these will change and the keys aren't updated all at once.
+# import array of characters  
+from characterArray import *
 
-url = 'https://awoiaf.westeros.org/index.php/Jaime_Lannister'
-response = requests.get(url)
-html = response.content
+for person in characters:
+	time.sleep(2)
+	url = 'https://awoiaf.westeros.org/index.php/' + person
+	try:
+		response = requests.get(url)
+		html = response.content
+		save_path = "/Users/alexrichards/Code/Projects/GOT-Finder/character_html_files"
+		file_name = person
 
-targets = []
+		complete_path = os.path.join(save_path, file_name + ".html")
 
-soup = BeautifulSoup(html, "html.parser")
-name = soup.select_one('#firstHeading')
+		file = open(complete_path, 'wb')
+		file.write(html)
+		file.close()
+	except requests.exceptions.RequestException as e:
+		print(e, person)
+		pass
 
-targets.append(name)
 
-startingElement = soup.select_one('.infobox')
 
-for sibling in startingElement.next_siblings:
-	if sibling.name == 'div':
-		break
-	targets.append(sibling)
 
-print(targets)
+#### For scraping individual pages for the character summary heading ####
+# targets = []
 
-# outfile = open("./linksTwo.csv", "w", newline='')
-# writer = csv.writer(outfile)
+# soup = BeautifulSoup(html, "html.parser")
+# name = soup.select_one('#firstHeading')
 
-# # writer.writerow(["Player", "Pos", "Age", "Tm", "G", "GS", "MP", "FG", "FGA", "FG%", "3P", "3PA", "3P%", "2P", "2PA", "2P%", "eFG%", "FT", "FTA", "FT%", "ORB", "DRB", "TRB", "AST", "STL", "BLK", "TOV", "PF", "PS/G"])
-# writer.writerows(map(lambda x: [x], list_of_rows))
+# targets.append(name)
+
+# startingElement = soup.select_one('.infobox')
+
+# for sibling in startingElement.next_siblings:
+# 	if sibling.name == 'div':
+# 		break
+# 	targets.append(sibling)
+
 
 
 
